@@ -115,6 +115,14 @@ export default class DataMapper {
     }
 
     for (const [id, section] of sections) {
+      if (
+        !section.fields.recommendations ||
+        section.fields.recommendations.every(
+          (recommendation) => recommendation == null
+        )
+      ) {
+        continue;
+      }
       yield new Section(section);
     }
   }

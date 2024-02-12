@@ -15,9 +15,9 @@ export class Section {
   minimumPathsForRecommendations;
 
   constructor({ fields, sys }) {
-    this.recommendations = fields.recommendations.map(
-      (recommendation) => new Recommendation(recommendation)
-    );
+    this.recommendations = fields.recommendations.map((recommendation) => {
+      return new Recommendation(recommendation);
+    });
 
     this.interstitialPage = fields.interstitialPage;
     this.questions = fields.questions.map((question) => new Question(question));
