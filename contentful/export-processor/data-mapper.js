@@ -1,5 +1,5 @@
-import { Section } from "./content-types/section";
-import ContentType from "./content-types/content-type";
+import { Section } from "#src/content-types/section";
+import ContentType from "#src/content-types/content-type";
 
 /**
  * DataMapper class for mapping and combining data from a file
@@ -141,12 +141,7 @@ export default class DataMapper {
                       maturity: path.recommendation?.maturity,
                     }
                   : null,
-              path: path.path.map((s) => {
-                return {
-                  question: s.question.text,
-                  answer: s.answer.text,
-                };
-              }),
+              path: path.pathWithTextOnly,
             };
 
             return result;

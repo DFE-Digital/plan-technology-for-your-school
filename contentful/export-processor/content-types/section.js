@@ -1,6 +1,6 @@
-import { Recommendation } from "./recommendation";
-import { Question } from "./question";
-import { UserJourney } from "../user-journey/user-journey";
+import { Recommendation } from "#src/content-types/recommendation";
+import { Question } from "#src/content-types/question";
+import { UserJourney } from "#src/user-journey/user-journey";
 
 export class Section {
   recommendations;
@@ -101,7 +101,7 @@ export class Section {
         return;
       }
 
-      return matchingPath.mapPathToOnlyQuestionAnswerTexts();
+      return matchingPath.path;
     });
 
     // If there are remaining questions, find paths for each question
@@ -113,9 +113,7 @@ export class Section {
 
       if (pathContainingQuestion == null) continue;
 
-      minimumPaths.push(
-        pathContainingQuestion.mapPathToOnlyQuestionAnswerTexts()
-      );
+      minimumPaths.push(pathContainingQuestion.path);
     }
 
     return minimumPaths;
@@ -142,7 +140,7 @@ export class Section {
       }
 
       minimumPathsForRecommendations[maturity] =
-        pathForRecommendation.mapPathToOnlyQuestionAnswerTexts();
+        pathForRecommendation.path.path;
     }
 
     return minimumPathsForRecommendations;
