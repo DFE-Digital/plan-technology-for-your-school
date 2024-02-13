@@ -2,7 +2,7 @@ export default class TestSuiteRow {
   testReference;
   appendixRef;
   adoTag;
-  subTopic;
+  subtopic;
   testScenario;
   preConditions;
   testSteps;
@@ -13,7 +13,7 @@ export default class TestSuiteRow {
     testReference,
     appendixRef,
     adoTag,
-    subTopic,
+    subtopic,
     testScenario,
     preConditions,
     testSteps,
@@ -23,7 +23,7 @@ export default class TestSuiteRow {
     this.testReference = testReference;
     this.appendixRef = appendixRef;
     this.adoTag = adoTag;
-    this.subTopic = subTopic;
+    this.subtopic = subtopic;
     this.testScenario = testScenario;
     this.preConditions = preConditions;
     this.testSteps = testSteps;

@@ -2,7 +2,7 @@ import contentfulExport from "contentful-export";
 import "dotenv/config";
 import DataMapper from "#src/data-mapper";
 import TestSuite from "#src/test-suite/test-suite";
-
+import WriteCsv from "./write-csv.js";
 const options = {
   spaceId: process.env.SPACE_ID,
   deliveryToken: process.env.DELIVERY_TOKEN,
@@ -26,13 +26,9 @@ const testSuites = Object.values(mapped.mappedSections).map((section) => {
     testReferenceIndex: index,
   });
 
-  console.log(testSuite);
-
   index = testSuite.testReferenceIndex;
 
   return testSuite;
 });
 
-const asArray = Array.from(testSuites);
-
-console.log(asArray);
+WriteCsv(testSuites);
