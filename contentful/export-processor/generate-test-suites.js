@@ -3,6 +3,7 @@ import "dotenv/config";
 import DataMapper from "#src/data-mapper";
 import TestSuite from "#src/test-suite/test-suite";
 import WriteCsv from "./write-csv.js";
+
 const options = {
   spaceId: process.env.SPACE_ID,
   deliveryToken: process.env.DELIVERY_TOKEN,
@@ -12,6 +13,7 @@ const options = {
   skipEditorInterfaces: true,
   skipRoles: true,
   skipWebhooks: true,
+  saveFile: false,
 };
 
 const exportedData = await contentfulExport(options);
