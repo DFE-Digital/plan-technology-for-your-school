@@ -1,5 +1,4 @@
-﻿using Dfe.PlanTech.Domain.Content.Interfaces;
-using Dfe.PlanTech.Domain.Content.Models;
+﻿using Dfe.PlanTech.Domain.Content.Models;
 using Dfe.PlanTech.Domain.Content.Models.Buttons;
 using Dfe.PlanTech.Domain.Questionnaire.Enums;
 using Dfe.PlanTech.Domain.Questionnaire.Models;
@@ -79,6 +78,17 @@ namespace Dfe.PlanTech.Web.UnitTests.Models
             }
         };
 
+        public WarningComponent Warning(string textValue)
+        {
+            return new WarningComponent
+            {
+                Text = new TextBody
+                {
+                    RichText = BuildRichContent(textValue)
+                }
+            };
+        }
+
         private static List<Question> BuildQuestions()
         {
             return new()
@@ -103,17 +113,13 @@ namespace Dfe.PlanTech.Web.UnitTests.Models
             };
         }
 
-        private static IContentComponent[] BuildContent()
-        {
-            return new IContentComponent[]
-            {
-                BuildButton()
-            };
-        }
-
         private static RichTextContent BuildRichContent()
         {
             return new RichTextContent { Value = "Content" };
+        }
+        private static RichTextContent BuildRichContent(string textValue)
+        {
+            return new RichTextContent { Value = textValue };
         }
 
         private static Button BuildButton()
