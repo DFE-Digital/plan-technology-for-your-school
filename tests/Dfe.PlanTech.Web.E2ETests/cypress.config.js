@@ -1,21 +1,8 @@
 const { defineConfig } = require('cypress');
-const webpackPreprocessor = require('@cypress/webpack-preprocessor');
-const path = require('path');
-const webpackOptions = webpackPreprocessor.defaultOptions;
-
-Object.assign(webpackOptions.webpackOptions, {
-  resolve: {
-    ...webpackOptions.webpackOptions.resolve,
-    alias: {
-      "export-processor": path.resolve(__dirname, '../../contentful/export-processor')
-    }
-  },
-});
-
+const retrieveContentfulData = require('./cypress/helpers/retrieve-contentful-data');
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
-  video: true,
   reporter: "cypress-multi-reporters",
   reporterOptions: {
     "configFile": "reporter-config.json"
@@ -24,20 +11,37 @@ module.exports = defineConfig({
     runMode: 1
   },
   e2e: {
-    setupNodeEvents(on, _) {
+    setupNodeEvents(on, config) {
       on('task', {
         log(message) {
-          console.log(message)
+          console.log(message);
 
-          return null
+          return null;
         },
         table(message) {
-          console.table(message)
+          console.table(message);
 
-          return null
+          return null;
+        },
+        async fetchContentfulData() {
+          const exportProcessor = await import('export-processor');
+
+          const data = await exportProcessor.ExportContentfulData({
+            spaceId: config.env.SPACE_ID,
+            managementToken: config.env.MANAGEMENT_TOKEN,
+            deliveryToken: config.env.DELIVERY_TOKEN,
+            environment: config.env.CONTENTFUL_ENVIRONMENT,
+          });
+
+          console.log('retrieved contentful data', data);
+
+          const dataMapper = new exportProcessor.DataMapper(data);
+
+          console.log('data mapper', dataMapper);
+
+          return dataMapper;
         }
-      }),
-        on('file:preprocessor', webpackPreprocessor(webpackOptions))
+      });
     },
   },
-})
+});
