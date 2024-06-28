@@ -7,5 +7,4 @@ index.json
 
 cypress.env.*.json
 
-Cypress/contentful-data.json
-Cypress/fixtures/sections.json
+Cypress/fixtures/contentful-data.json

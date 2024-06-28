@@ -3,13 +3,11 @@ import { selfAssessmentSlug } from "../helpers/page-slugs.js";
 import ValidateContent from "../helpers/content-validators/content-validator.js";
 import DataMapper from "export-processor/data-mapper.js";
 
-let dataMapper;
 describe("Pages should have content", () => {
 
-  const sectionFixtures = require('../fixtures/sections');
+  const dataMapper = new DataMapper(require('../fixtures/contentful-data'));
 
   before(async () => {
-    dataMapper = new DataMapper(await cy.task("readContentfulDataJson"));
   });
 
   it("Should render navigation links", async () => {
@@ -51,29 +49,41 @@ describe("Pages should have content", () => {
     ValidatePage(slug, selfAssessmentPage);
   });
 
-  (sectionFixtures ?? []).forEach((section) => {
+  Array.from(dataMapper?.pages ?? [])
+    .map(([_, page]) => page)
+    .filter((page) => !page.fields.requiresAuthorisation)
+    .forEach((page) => {
+      it(
+        "Should have correct content on non-authorised pages. Testing " +
+        page.fields.internalName,
+        () => {
+          const slug = `/${page.fields.slug.replace("/", "")}`;
+          cy.visit(slug);
+          ValidatePage(slug, page);
+        }
+      );
+    });
+
+
+  (dataMapper?.mappedSections ?? []).forEach((section) => {
     it(`${section.name} should have every question with correct content`, () => {
       cy.loginWithEnv(`${selfAssessmentSlug}`);
 
-      const matchingSection = dataMapper.mappedSections.find(s => s.id == section.id);
-
       validateSections(
-        matchingSection,
-        matchingSection.minimumPathsToNavigateQuestions,
+        section,
+        section.minimumPathsToNavigateQuestions,
         dataMapper
       );
     });
 
-    console.log("section " + section.name, section.minimumPathsForRecommendations);
-
-    Object.entries(section.minimumPathsForRecommendations).forEach(
-      ([maturity, path]) => {
+    Object.keys(section.minimumPathsForRecommendations).forEach(
+      (maturity) => {
         it(`${section.name} should retrieve correct recommendation for ${maturity} maturity, and all content is valid`, () => {
           cy.loginWithEnv(`${selfAssessmentSlug}`);
 
           const matchingSection = dataMapper.mappedSections.find(s => s.id == section.id);
 
-          validateSections(matchingSection, [path], dataMapper, () => {
+          validateSections(matchingSection, section.minimumPathsForRecommendations[maturity], dataMapper, () => {
             validateRecommendationForMaturity(matchingSection, maturity);
           });
         });

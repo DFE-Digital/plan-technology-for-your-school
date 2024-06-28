@@ -1,7 +1,8 @@
 const fs = require("fs");
 
-const ContentfulDataPath = "./cypress/contentful-data.json";
-const SectionsFixturePath = "./cypress/fixtures/sections.json";
+const ContentfulDataPath = "./cypress/fixtures/contentful-data.json";
+
+let exportProcessor;
 
 /**
  * Exports data from Contentful and writes to files for use by the dynamic-page-validator.cy.js tests
@@ -10,16 +11,9 @@ const SectionsFixturePath = "./cypress/fixtures/sections.json";
 async function loadAndSaveContentfulData(config) {
   console.log("Exporting/Loading Contentful data");
   try {
-    const exportProcessor = await import('export-processor');
+    exportProcessor = await import('export-processor');
 
-    const data = await fetchContentfulExport({ exportContentfulData: exportProcessor.ExportContentfulData, config });
-
-    if (!data) {
-      return;
-    }
-
-    console.log("Loaded data. Creating fixtures");
-    saveSectionsIfNotExist(data);
+    await fetchContentfulExport({ exportContentfulData: exportProcessor.ExportContentfulData, config });
   }
   catch (e) {
     console.error("Error loading Contentful data", e);
@@ -49,6 +43,7 @@ async function fetchContentfulExport({ exportContentfulData, config }) {
 *    So we save the Contentful entries as JSON instead for read + usage by the test file later. */
   fs.writeFileSync(ContentfulDataPath, JSON.stringify(data));
 
+  console.log("Saved Contentful data as " + ContentfulDataPath);
   return data;
 }
 
@@ -61,28 +56,6 @@ const readContentfulDataFromJson = () => {
 
   return JSON.parse(data);
 };
-
-/**
- * Cypress tests can only be dynamically generated from data already existing before any specs run.
- * Whilst we could retrieve this information with `cy.task`, this would mean most of the tests would be unable
- * to be generated, as this is only ran at the start of the tests. Therefore we extract the minimum amount of
- * data needed to generate the tests,
- */
-function saveSectionsIfNotExist(data) {
-  if (fs.existsSync(SectionsFixturePath)) {
-    return;
-  }
-
-  const dataMapper = new exportProcessor.DataMapper(data);
-
-  const sectionFixtures = dataMapper.mappedSections.map(section => ({
-    name: section.name,
-    minimumPathsForRecommendations: section.minimumPathsForRecommendations,
-    id: section.id
-  }));
-
-  fs.writeFileSync(SectionsFixturePath, JSON.stringify(sectionFixtures));
-}
 
 module.exports = {
   loadAndSave: loadAndSaveContentfulData,
