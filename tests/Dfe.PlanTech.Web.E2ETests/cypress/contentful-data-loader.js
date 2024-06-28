@@ -22,6 +22,7 @@ async function loadAndSaveContentfulData(config) {
 
 async function fetchContentfulExport({ exportContentfulData, config }) {
   if (fs.existsSync(ContentfulDataPath)) {
+    console.log(`Contentful export file at ${ContentfulDataPath} already exists - using it`);
     const json = fs.readFileSync(ContentfulDataPath, "utf-8");
 
     return JSON.parse(json);
